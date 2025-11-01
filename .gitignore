@@ -1,2 +1,5 @@
 # Project exclude paths
 /out/
+
+# Ignore archive bundles generated for distribution
+*.zip
