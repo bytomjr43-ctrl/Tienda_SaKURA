@@ -1,7 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Producto {
+public class Producto implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static int SEQ = 1;
     private final int id;
     private String nombre;
@@ -54,5 +56,11 @@ public class Producto {
             return true;
         }
         return false;
+    }
+
+    public static synchronized void actualizarSecuencia(int siguienteId) {
+        if (siguienteId > SEQ) {
+            SEQ = siguienteId;
+        }
     }
 }

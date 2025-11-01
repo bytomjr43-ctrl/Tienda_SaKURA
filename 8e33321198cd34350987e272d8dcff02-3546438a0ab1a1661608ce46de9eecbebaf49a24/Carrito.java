@@ -1,7 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Carrito {
+public class Carrito implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static int SEQ = 1;
     private final int id;
     private Cliente cliente;
@@ -40,5 +42,11 @@ public class Carrito {
 
     public void limpiar() {
         lineas.clear();
+    }
+
+    public static synchronized void actualizarSecuencia(int siguienteId) {
+        if (siguienteId > SEQ) {
+            SEQ = siguienteId;
+        }
     }
 }

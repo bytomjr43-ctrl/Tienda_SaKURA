@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cliente extends Usuario {
+    private static final long serialVersionUID = 1L;
     private String direccionEnvio;
     private String telefono;
     private List<MetodoPago> metodosPago;
@@ -28,4 +29,8 @@ public class Cliente extends Usuario {
 
     public void agregarMetodoPago(MetodoPago m) { metodosPago.add(m); }
     public void agregarCompraAlHistorial(Compra c) { historialCompras.add(c); }
+
+    public boolean eliminarMetodoPago(int idMetodo) {
+        return metodosPago.removeIf(m -> m.getId() == idMetodo);
+    }
 }

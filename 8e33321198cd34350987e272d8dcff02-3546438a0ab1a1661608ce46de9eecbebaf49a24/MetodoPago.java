@@ -1,4 +1,7 @@
-public class MetodoPago {
+import java.io.Serializable;
+
+public class MetodoPago implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static int SEQ = 1;
     private final int id;
     private String tipo; // e.g., "TARJETA", "PAYPAL"
@@ -23,4 +26,10 @@ public class MetodoPago {
     public String getTipo() { return tipo; }
     public String getTitular() { return titular; }
     public String getNumeroEnmascarado() { return numeroEnmascarado; }
+
+    public static synchronized void actualizarSecuencia(int siguienteId) {
+        if (siguienteId > SEQ) {
+            SEQ = siguienteId;
+        }
+    }
 }

@@ -1,7 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Categoria {
+public class Categoria implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static int SEQ = 1;
     private final int id;
     private String nombre;
@@ -25,6 +27,12 @@ public class Categoria {
     public void agregarProducto(Producto p) {
         if (p != null && !productos.contains(p)) {
             productos.add(p);
+        }
+    }
+
+    public static synchronized void actualizarSecuencia(int siguienteId) {
+        if (siguienteId > SEQ) {
+            SEQ = siguienteId;
         }
     }
 }

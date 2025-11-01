@@ -1,4 +1,7 @@
-public class LineaCompra {
+import java.io.Serializable;
+
+public class LineaCompra implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Producto producto;
     private int cantidad;
     private double precioUnitario;
