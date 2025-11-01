@@ -1,7 +1,9 @@
-import java.util.concurrent.atomic.AtomicInteger;
+import java.io.Serializable;
 
-public abstract class Usuario {
-    private static final AtomicInteger SEQ = new AtomicInteger(1);
+public abstract class Usuario implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private static int SEQ = 1;
 
     private final int id;
     private String nombre;
@@ -10,7 +12,7 @@ public abstract class Usuario {
     private boolean activo;
 
     public Usuario(String nombre, String email, String passwordHash) {
-        this.id = SEQ.getAndIncrement();
+        this.id = SEQ++;
         this.nombre = nombre;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -31,6 +33,12 @@ public abstract class Usuario {
 
     public boolean authenticate(String hash) {
         return this.passwordHash != null && this.passwordHash.equals(hash);
+    }
+
+    public static synchronized void actualizarSecuencia(int siguienteId) {
+        if (siguienteId > SEQ) {
+            SEQ = siguienteId;
+        }
     }
 }
 

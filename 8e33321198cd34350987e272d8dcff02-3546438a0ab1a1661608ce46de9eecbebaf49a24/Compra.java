@@ -1,7 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Compra {
+public class Compra implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static int SEQ = 1;
     private final int id;
     private Cliente cliente;
@@ -35,5 +37,11 @@ public class Compra {
         double t = 0.0;
         for (LineaCompra lc : lineas) t += lc.getSubtotal();
         this.total = t;
+    }
+
+    public static synchronized void actualizarSecuencia(int siguienteId) {
+        if (siguienteId > SEQ) {
+            SEQ = siguienteId;
+        }
     }
 }
