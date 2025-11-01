@@ -33,7 +33,9 @@ public class Main {
                     }
                     break;
                 case 3:
-                    mostrarCarrito(cliente);
+                    if (gestionarCarrito(sc, cliente)) {
+                        PersistenciaTienda.guardarEstado(estado);
+                    }
                     break;
                 case 4:
                     if (confirmarCompra(sc, cliente)) {
@@ -66,7 +68,7 @@ public class Main {
         System.out.println("\n========= MENÚ PRINCIPAL =========");
         System.out.println("1. Ver catálogo de productos");
         System.out.println("2. Agregar producto al carrito");
-        System.out.println("3. Ver carrito actual");
+        System.out.println("3. Gestionar carrito");
         System.out.println("4. Confirmar compra");
         System.out.println("5. Ver historial de compras");
         System.out.println("6. Gestionar métodos de pago");
@@ -199,18 +201,97 @@ public class Main {
         return null;
     }
 
-    private static void mostrarCarrito(Cliente cliente) {
+    private static boolean gestionarCarrito(Scanner sc, Cliente cliente) {
         Carrito carrito = cliente.getCarritoActivo();
         if (carrito.getLineas().isEmpty()) {
             System.out.println("El carrito está vacío.");
-            return;
+            return false;
         }
+
+        boolean huboCambios = false;
+        boolean volver = false;
+        while (!volver) {
+            mostrarResumenCarrito(carrito);
+            System.out.println("1. Cambiar cantidad");
+            System.out.println("2. Eliminar producto");
+            System.out.println("3. Vaciar carrito");
+            System.out.println("4. Volver");
+            int opcion = leerEntero(sc, "Seleccione una opción: ");
+
+            switch (opcion) {
+                case 1:
+                    if (actualizarCantidadCarrito(sc, carrito)) {
+                        huboCambios = true;
+                    }
+                    break;
+                case 2:
+                    if (eliminarProductoCarrito(sc, carrito)) {
+                        huboCambios = true;
+                    }
+                    break;
+                case 3:
+                    carrito.limpiar();
+                    System.out.println("Carrito vaciado correctamente.");
+                    huboCambios = true;
+                    volver = true;
+                    break;
+                case 4:
+                    volver = true;
+                    break;
+                default:
+                    System.out.println("Opción inválida. Intente nuevamente.");
+                    break;
+            }
+
+            if (carrito.getLineas().isEmpty()) {
+                volver = true;
+            }
+        }
+
+        return huboCambios;
+    }
+
+    private static void mostrarResumenCarrito(Carrito carrito) {
         System.out.println("\n=== CARRITO ACTUAL ===");
         for (LineaCarrito lc : carrito.getLineas()) {
-            System.out.println(lc.getProducto().getNombre() + " x" + lc.getCantidad()
+            System.out.println(lc.getProducto().getId() + ". " + lc.getProducto().getNombre() + " x" + lc.getCantidad()
                     + " - Subtotal: $" + lc.getSubtotal());
         }
         System.out.println("TOTAL: $" + carrito.calcularTotal());
+    }
+
+    private static boolean actualizarCantidadCarrito(Scanner sc, Carrito carrito) {
+        int idProducto = leerEntero(sc, "Ingrese el ID del producto: ");
+        Optional<LineaCarrito> linea = carrito.buscarLineaPorProducto(idProducto);
+        if (linea.isEmpty()) {
+            System.out.println("No se encontró un producto con ese ID en el carrito.");
+            return false;
+        }
+
+        int nuevaCantidad = leerEntero(sc, "Nueva cantidad: ");
+        if (nuevaCantidad <= 0) {
+            System.out.println("La cantidad debe ser mayor que cero.");
+            return false;
+        }
+        Producto producto = linea.get().getProducto();
+        if (!producto.hayStock(nuevaCantidad)) {
+            System.out.println("No hay stock suficiente para esa cantidad.");
+            return false;
+        }
+
+        carrito.actualizarCantidad(idProducto, nuevaCantidad);
+        System.out.println("Cantidad actualizada correctamente.");
+        return true;
+    }
+
+    private static boolean eliminarProductoCarrito(Scanner sc, Carrito carrito) {
+        int idProducto = leerEntero(sc, "Ingrese el ID del producto a eliminar: ");
+        if (carrito.eliminarProducto(idProducto)) {
+            System.out.println("Producto eliminado del carrito.");
+            return true;
+        }
+        System.out.println("No se encontró un producto con ese ID en el carrito.");
+        return false;
     }
 
     private static boolean confirmarCompra(Scanner sc, Cliente cliente) {
@@ -224,6 +305,7 @@ public class Main {
             return false;
         }
 
+        mostrarResumenCarrito(carrito);
         listarMetodosPago(cliente);
         int idMetodo = leerEntero(sc, "Seleccione el ID del método de pago a utilizar: ");
         MetodoPago metodo = null;

@@ -21,7 +21,7 @@ Al cerrar la aplicación se guarda automáticamente el estado de la tienda en `d
 
 * Registro e inicio de sesión de clientes con validaciones básicas y contraseñas almacenadas como hash.
 * Catálogo de productos clasificados por categorías con control de stock al agregar artículos al carrito.
-* Gestión completa del carrito de compras y confirmación de pedidos eligiendo un método de pago registrado.
+* Gestión completa del carrito de compras (actualizar cantidades, eliminar productos o vaciarlo) y confirmación de pedidos eligiendo un método de pago registrado.
 * Persistencia del estado (clientes, carritos, compras y métodos de pago) mediante serialización en disco.
 * Manejo robusto de entradas erróneas en consola (números inválidos, campos vacíos, etc.).
 

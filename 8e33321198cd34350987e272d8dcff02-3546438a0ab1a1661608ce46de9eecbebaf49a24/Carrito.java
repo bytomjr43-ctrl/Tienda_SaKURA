@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Carrito implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -30,6 +31,29 @@ public class Carrito implements Serializable {
             }
         }
         lineas.add(new LineaCarrito(p, cantidad));
+    }
+
+    public Optional<LineaCarrito> buscarLineaPorProducto(int productoId) {
+        return lineas.stream()
+                .filter(lc -> lc.getProducto().getId() == productoId)
+                .findFirst();
+    }
+
+    public boolean actualizarCantidad(int productoId, int nuevaCantidad) {
+        if (nuevaCantidad <= 0) {
+            return eliminarProducto(productoId);
+        }
+        for (LineaCarrito lc : lineas) {
+            if (lc.getProducto().getId() == productoId) {
+                lc.setCantidad(nuevaCantidad);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean eliminarProducto(int productoId) {
+        return lineas.removeIf(lc -> lc.getProducto().getId() == productoId);
     }
 
     public double calcularTotal() {
